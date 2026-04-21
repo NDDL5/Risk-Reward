@@ -7,72 +7,129 @@
     <link rel="icon" type="image/png" href="icon.png">
     <title>מחשבון Risk/Reward לסחיקה</title>
     <style>
-       :root {
-            /* מצב בהיר - רציני ונקי */
-            --bg-primary: #f4f4f7;
+       * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* מצב בהיר - נקי ורציני */
+            --bg-primary: #f5f5f7;
             --bg-secondary: #ffffff;
             --text-primary: #1d1d1f;
-            --text-secondary: #86868b;
+            --text-secondary: #6e6e73;
+            --accent-color: #0071e3;
             --input-bg: #ffffff;
             --input-border: #d2d2d7;
             --box-bg: #f5f5f7;
-            --accent-color: #0071e3; /* כחול אפל */
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            --success: #1d7044;
+            --danger: #e30000;
         }
 
         body.dark-mode {
-            /* מצב כהה - מקצועי ודרמטי */
+            /* מצב כהה - יוקרתי ומקצועי */
             --bg-primary: #000000;
             --bg-secondary: #1c1c1e;
             --text-primary: #f5f5f7;
-            --text-secondary: #a1a1a6;
+            --text-secondary: #86868b;
+            --accent-color: #0a84ff;
             --input-bg: #2c2c2e;
             --input-border: #3a3a3c;
             --box-bg: #2c2c2e;
-            --accent-color: #0a84ff;
             --shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            --success: #30d158;
+            --danger: #ff453a;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--bg-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
-            padding: 1.2rem;
+            padding: 1.5rem;
             direction: rtl;
-            transition: all 0.3s ease;
+            transition: background 0.3s, color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .container {
-            max-width: 800px;
-            margin: 0 auto;
+            width: 100%;
+            max-width: 650px;
             background: var(--bg-secondary);
-            padding: 2rem;
-            border-radius: 18px;
+            padding: 2.5rem;
+            border-radius: 20px;
             box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
         }
 
         .header h1 {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 600;
             letter-spacing: -0.5px;
-            color: var(--text-primary);
         }
 
-        /* עיצוב כפתורים ואינפוטים למראה רציני */
-        .input-group input, .currency-select select {
+        .theme-toggle {
             background: var(--input-bg);
             border: 1px solid var(--input-border);
-            border-radius: 10px;
-            padding: 0.8rem;
             color: var(--text-primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-group label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.6rem;
+            display: block;
+        }
+
+        .input-group input, .currency-select select {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-primary);
+            padding: 0.8rem;
+            border-radius: 12px;
             font-size: 16px;
+            transition: all 0.2s;
         }
 
         .input-group input:focus {
-            border-color: var(--accent-color);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.2);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .result-column {
@@ -80,16 +137,47 @@
             padding-top: 1.5rem;
         }
 
-        button#resetBtn {
-            background: var(--input-border);
-            color: var(--text-primary);
-            border-radius: 8px;
+        .result-box {
+            background: var(--box-bg);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 0.8rem;
+        }
+
+        .result-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .result-value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .result-value.success { color: var(--success); }
+        .result-value.danger { color: var(--danger); }
+
+        #resetBtn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--text-primary);
+            color: var(--bg-secondary);
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
             transition: opacity 0.2s;
         }
 
-        button#resetBtn:hover {
-            opacity: 0.8;
-            transform: none;
+        #resetBtn:hover { opacity: 0.9; }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 1.5rem;
         }
     </style>
 </head>
